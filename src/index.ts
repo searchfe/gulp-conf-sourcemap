@@ -20,8 +20,7 @@ const isFileExisted = async (file: string) => {
   })
 }
 
-
-const handleFileFn = async (path: string) => {
+const getFile = async (path: string) => {
   return await new Promise((resovle, reject) => {
       fs.readFile(path, 'utf8', (err: any, file: any) => {
           if (err) {
@@ -32,30 +31,40 @@ const handleFileFn = async (path: string) => {
   })
 }
 
-const createFolder = (to: string) => {
-  const sep = path.sep
-  const folders = path.dirname(to).split(sep);
-  let p = '';
-  while (folders.length) {
-      p += folders.shift() + sep;
-      if (!fs.existsSync(p)) {
-          fs.mkdirSync(p);
-      }
-  }
-};
-
-const appendContents = (destFile: string, contents: any, moduleMap: object, path: string) => {
-  for (const i in moduleMap) {
-    for (const id in moduleMap[i]) {
-      if (moduleMap[i].hasOwnProperty(id)) {
-        Object.assign(contents, {[id]: path});
+const handleContents = (destFile: string, contents: any, map: object, path: string) => {
+  for (const i in map) {
+    if (typeof(map[i]) === 'object') {
+      handleContents(destFile, contents, map[i], path);
+    }
+    if (typeof(map[i]) === 'string') {
+      if (path.indexOf(i) !== -1) {
+        map[i] = path;
       }
     }
   }
-  contents = JSON.stringify(contents)
-  fs.writeFile(destFile, contents, (res: any) => {
-    res ? console.log('res', res) : null;
-});
+}
+
+const handle = (contents: any, destFile: string, path: string, cb: any ) => {
+  getFile(destFile).then((data: any) => {
+    if (data.file) {
+      let obj = data.file;
+      contents = JSON.parse(obj);
+      let map =  Object.assign({}, contents);
+      handleContents(destFile, contents, map, path);
+      contents = Object.assign({}, contents, map);
+      contents = JSON.stringify(contents);
+      fs.writeFile(destFile, contents, (res: any) => {
+        if (res) console.log('res', res);
+        cb();
+      });
+    }
+    else {
+      cb();
+    }
+  }).catch(err => {
+    cb();
+    console.log(err)
+  })
 }
 
 export function sourceMap(param: any = {}) {
@@ -71,40 +80,31 @@ export function sourceMap(param: any = {}) {
     }
     else {
       if (file.isBuffer()) {
-        let {fileType, moduleMap, dest, base} = param;
+        let {fileType, dest, base, confFile} = param;
         const mapName = param.mapName || 'source-map.json';
-        if (fileType && file.extname === fileType) {
-          if (moduleMap == null) {
-            this.emit('error', new PluginError('param are missing'));
-            return cb();
-          }
+        if (fileType && file.extname === fileType && confFile) {
           // 开始文件处理
-          // let dirname = file.dirname;
           let _base = file._base;
           let originPath = file.path;
-          // let id = dirname.split(_base + '/')[1];
           let path = base + originPath.split(_base)[1];
           let destFile = `${dest}/${mapName}`;
           let contents = {};
           isFileExisted(destFile).then(() => {
-            // 文件已经存在，追加文件内数据；
-            handleFileFn(destFile).then((data: any) => {
-              if (data.file) {
-                let a = data.file;
-                contents = JSON.parse(a);
-                appendContents(destFile, contents, moduleMap, path);
-              }
-            }).catch(err => {
-              console.log(err)
-            })
+              handle(contents, destFile, path, cb);
           }).catch(() => {
-            // 文件不存在，创建该文件，并且初始化第一条数据；
-            createFolder(destFile);
-            appendContents(destFile, contents, moduleMap, path);
+            fs.copyFile(confFile, destFile, err => {
+                if (err) throw err;
+                handle(contents, destFile, path, cb);
+            })
           });
         }
+        else {
+          cb();
+        }
+      }
+      else {
+        cb();
       }
     }
-    cb();
   })
 }

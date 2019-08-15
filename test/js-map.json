@@ -1,0 +1,1 @@
+{"php":{"glob":{"whatwg-fetch":"whatwg-fetch/fetch.js"},"umd":{"promise-polyfill":"promise-polyfill/lib/polyfill.js"}},"js":{"concat":{"@baidu/web-animations-js":"test/js-files/@baidu/web-animations-js/web-animations-b8d80a74d8.min.js"}}}
