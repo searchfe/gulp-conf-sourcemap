@@ -37,7 +37,9 @@ const handleContents = (destFile: string, contents: any, map: object, path: stri
       handleContents(destFile, contents, map[i], path);
     }
     if (typeof(map[i]) === 'string') {
-      if (path.indexOf(i) !== -1) {
+      let id = i.toLowerCase();
+      let value = path.toLowerCase();
+      if (value.indexOf(id) !== -1) {
         map[i] = path;
       }
     }
@@ -122,16 +124,25 @@ const createFolder = (to: string) => {
   }
 };
 
-const formatHandle = (map: any, contents: any, destFile: string) => {
+const formatHandle = (map: any, contents: any, shim: any, destFile: string) => {
   for (const i in map) {
     if (typeof(map[i]) === 'object') {
-      formatHandle(map[i], contents, destFile);
+      formatHandle(map[i], contents, shim, destFile);
     }
     if (typeof(map[i]) === 'string') {
       Object.assign(contents, {[i]: map[i]});
+      Object.assign(shim, {[i]: {exports: [i]}});
     }
   }
-  contents = JSON.stringify(contents)
+
+  contents = JSON.stringify(contents);
+  shim = JSON.stringify(shim);
+  contents = `(function () {
+    require.config({
+      'paths': ${contents},
+      shim: ${shim}
+    });
+  })();`
   fs.writeFile(destFile, contents, (res: any) => {
       res ? console.log('res', res) : null;
   });
@@ -155,6 +166,7 @@ export function formatConf(param: any = {}) {
         const name = param.name || 'async-conf.js';
         let destFile = `${dest}/${name}`;
         let contents = {};
+        let shim = {};
         let map: any = file.contents.toString();
         map = JSON.parse(map);
         isFileExisted(destFile).then(() => {
@@ -162,7 +174,7 @@ export function formatConf(param: any = {}) {
           cb();
         }).catch(() => {
           createFolder(destFile);
-          formatHandle(map, contents, destFile);
+          formatHandle(map, contents, shim, destFile);
           cb();
         });
       }
