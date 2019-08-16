@@ -46,8 +46,8 @@ const handleContents = (destFile: string, contents: any, map: object, path: stri
   }
 }
 
-const handle = (contents: any, destFile: string, path: string, cb: any ) => {
-  getFile(destFile).then((data: any) => {
+const handle = (contents: any, destFile: string, path: string, cb: any, confFile: string) => {
+  getFile(confFile).then((data: any) => {
     if (data.file) {
       let obj = data.file;
       contents = JSON.parse(obj);
@@ -92,12 +92,10 @@ export function replacePath(param: any = {}) {
           let destFile = `${dest}/${mapName}`;
           let contents = {};
           isFileExisted(destFile).then(() => {
-              handle(contents, destFile, path, cb);
+              handle(contents, destFile, path, cb, confFile);
           }).catch(() => {
-            fs.copyFile(confFile, destFile, err => {
-                if (err) throw err;
-                handle(contents, destFile, path, cb);
-            })
+            createFolder(destFile);
+            handle(contents, destFile, path, cb, confFile);
           });
         }
         else {

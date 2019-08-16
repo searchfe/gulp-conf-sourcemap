@@ -1,1 +1,1 @@
-{"php":{"glob":{"whatwg-fetch":"test/php-files/whatwg-fetch/fetch-0c21273fa3.php"},"umd":{"promise-polyfill":"test/php-files/promise-polyfill/lib/polyfill-df2641d375.php"}},"js":{"concat":{"@baidu/web-animations-js":"test/js-files/@baidu/web-animations-js/web-animations-b8d80a74d8.min.js"}}}
+{"php":{"glob":{"whatwg-fetch":"whatwg-fetch/fetch.js"},"umd":{"promise-polyfill":"test/php-files/promise-polyfill/lib/polyfill-df2641d375.php"}},"js":{"concat":{"@baidu/web-animations-js":"@baidu/web-animations-js/web-animations.min.js"}}}
