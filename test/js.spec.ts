@@ -1,7 +1,7 @@
 import * as gulp from 'gulp';
 import * as fs from 'fs';
 import * as path from 'path';
-import {sourceMap} from '../src/index';
+import {replacePath} from '../src/index';
 
 const conf = {
   "php": {
@@ -20,7 +20,7 @@ const conf = {
 }
 
 gulp.src(['test/js-file/**/*'])
-.pipe(sourceMap({
+.pipe(replacePath({
   base: 'test/js-files',
   moduleMap: conf.js,
   dest: 'test',
