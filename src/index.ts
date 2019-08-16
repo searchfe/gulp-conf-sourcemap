@@ -124,29 +124,17 @@ const createFolder = (to: string) => {
   }
 };
 
-const formatHandle = (map: any, contents: any, shim: any, destFile: string) => {
+const formatHandle = (map: any, contents: any, shim: any, destFile: string, cb: any) => {
   for (const i in map) {
     if (typeof(map[i]) === 'object') {
-      formatHandle(map[i], contents, shim, destFile);
+      formatHandle(map[i], contents, shim, destFile, cb);
     }
     if (typeof(map[i]) === 'string') {
-      Object.assign(contents, {[i]: map[i]});
+      let value = map[i].replace('.js', '');
+      Object.assign(contents, {[i]: value});
       Object.assign(shim, {[i]: {exports: [i]}});
     }
   }
-
-  contents = JSON.stringify(contents);
-  shim = JSON.stringify(shim);
-  contents = `(function () {
-    require.config({
-      'paths': ${contents},
-      shim: ${shim}
-    });
-  })();`
-  fs.writeFile(destFile, contents, (res: any) => {
-      res ? console.log('res', res) : null;
-  });
-
 }
 
 export function formatConf(param: any = {}) {
@@ -174,8 +162,19 @@ export function formatConf(param: any = {}) {
           cb();
         }).catch(() => {
           createFolder(destFile);
-          formatHandle(map, contents, shim, destFile);
-          cb();
+          formatHandle(map, contents, shim, destFile, cb);
+          contents = JSON.stringify(contents);
+          shim = JSON.stringify(shim);
+          contents = `(function () {
+            require.config({
+              'paths': ${contents},
+              shim: ${shim}
+            });
+          })();`
+          fs.writeFile(destFile, contents, (res: any) => {
+            res ? console.log('res', res) : null;
+            cb();
+          });
         });
       }
       else {
