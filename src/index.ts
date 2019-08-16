@@ -67,7 +67,7 @@ const handle = (contents: any, destFile: string, path: string, cb: any ) => {
   })
 }
 
-export function sourceMap(param: any = {}) {
+export function replacePath(param: any = {}) {
   return through.obj(function(file:File, enc, cb) {
     if (file.isStream()) {
       this.emit('error', new PluginError(PLUGIN_NAME, 'Stream not supported!'));
@@ -101,6 +101,70 @@ export function sourceMap(param: any = {}) {
         else {
           cb();
         }
+      }
+      else {
+        cb();
+      }
+    }
+  })
+}
+
+
+const createFolder = (to: string) => {
+  const sep = path.sep
+  const folders = path.dirname(to).split(sep);
+  let p = '';
+  while (folders.length) {
+      p += folders.shift() + sep;
+      if (!fs.existsSync(p)) {
+          fs.mkdirSync(p);
+      }
+  }
+};
+
+const formatHandle = (map: any, contents: any, destFile: string) => {
+  for (const i in map) {
+    if (typeof(map[i]) === 'object') {
+      formatHandle(map[i], contents, destFile);
+    }
+    if (typeof(map[i]) === 'string') {
+      Object.assign(contents, {[i]: map[i]});
+    }
+  }
+  contents = JSON.stringify(contents)
+  fs.writeFile(destFile, contents, (res: any) => {
+      res ? console.log('res', res) : null;
+  });
+
+}
+
+export function formatConf(param: any = {}) {
+  return through.obj(function(file:File, enc, cb) {
+    if (file.isStream()) {
+      this.emit('error', new PluginError(PLUGIN_NAME, 'Stream not supported!'));
+      return cb();
+    }
+
+    if (Object.keys(param).length === 0) {
+      this.emit('error', new PluginError('Lack of parameter'));
+      cb();
+    }
+    else {
+      if (file.isBuffer()) {
+        let {dest} = param;
+        const name = param.name || 'async-conf.js';
+        let destFile = `${dest}/${name}`;
+        let contents = {};
+        let map: any = file.contents.toString();
+        map = JSON.parse(map);
+        isFileExisted(destFile).then(() => {
+          this.emit('error', new PluginError('The file already exists'));
+          cb();
+        }).catch(() => {
+          createFolder(destFile);
+          formatHandle(map, contents, destFile);
+          cb();
+        });
       }
       else {
         cb();
