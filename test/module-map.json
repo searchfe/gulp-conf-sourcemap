@@ -9,7 +9,7 @@
   },
   "js": {
     "concat": {
-      "@baidu/web-animations-js": "@baidu/web-animations-js/web-animations.min.js"
+      "Animation": "@baidu/web-animations-js/web-animations.min.js"
     }
   }
 }

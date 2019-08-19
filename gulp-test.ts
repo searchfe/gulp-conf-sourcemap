@@ -25,7 +25,7 @@ const conf = require('./test/module-map.json');
 
 gulp.src(['test/async-map.json'])
 .pipe(formatConf({
-  isShim: false,
+  isShim: true,
   dest: 'test',
   name: 'async-conf.js'
 }))

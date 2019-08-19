@@ -165,7 +165,7 @@ export function formatConf(param: any = {}) {
           shim = JSON.stringify(shim);
           let conf = '';
           if (isShim) {
-            conf = `'paths': ${contents}, shim: ${shim}}`
+            conf = `'paths': ${contents}, shim: ${shim}`
           }
           else {
             conf = `'paths': ${contents}`
