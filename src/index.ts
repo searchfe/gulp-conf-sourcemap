@@ -148,7 +148,7 @@ export function formatConf(param: any = {}) {
     }
     else {
       if (file.isBuffer()) {
-        let {dest} = param;
+        let {dest, isShim} = param;
         const name = param.name || 'async-conf.js';
         let destFile = `${dest}/${name}`;
         let contents = {};
@@ -163,10 +163,16 @@ export function formatConf(param: any = {}) {
           formatHandle(map, contents, shim, destFile, cb);
           contents = JSON.stringify(contents);
           shim = JSON.stringify(shim);
+          let conf = '';
+          if (isShim) {
+            conf = `'paths': ${contents}, shim: ${shim}}`
+          }
+          else {
+            conf = `'paths': ${contents}`
+          }
           contents = `(function () {
             require.config({
-              'paths': ${contents},
-              shim: ${shim}
+              ${conf}
             });
           })();`
           fs.writeFile(destFile, contents, (res: any) => {
