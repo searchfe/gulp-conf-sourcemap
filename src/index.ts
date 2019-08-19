@@ -92,7 +92,7 @@ export function replacePath(param: any = {}) {
           let destFile = `${dest}/${mapName}`;
           let contents = {};
           isFileExisted(destFile).then(() => {
-              handle(contents, destFile, path, cb, confFile);
+              handle(contents, destFile, path, cb, destFile);
           }).catch(() => {
             createFolder(destFile);
             handle(contents, destFile, path, cb, confFile);
