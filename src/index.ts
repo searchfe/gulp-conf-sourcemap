@@ -39,8 +39,15 @@ const handleContents = (destFile: string, contents: any, map: object, path: stri
     if (typeof(map[i]) === 'string') {
       let id = i.toLowerCase();
       let value = path.toLowerCase();
-      if (value.indexOf(`/${id}`) !== -1) {
-        map[i] = path;
+      let fileName = value.split('/')[value.split('/').length - 1];
+      let fileNameArr = fileName.split(id);
+      const reg = /^-[a-z0-9]/i;
+      const reg2 = /^\.php/i;
+      const reg3 = /^\.j/i;
+      if (fileNameArr.length === 2) {
+          if (reg.test(fileNameArr[1]) || reg2.test(fileNameArr[1]) || reg3.test(fileNameArr[1])) {
+              map[i] = path;
+          }
       }
     }
   }
