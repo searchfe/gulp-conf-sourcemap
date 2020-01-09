@@ -4,19 +4,23 @@ import * as path from 'path';
 import {replacePath} from '../src/index';
 
 const conf = {
-  "php": {
-    "glob": {
-      "whatwg-fetch": "whatwg-fetch/fetch.js"
+    "php": {
+        "glob": {
+        "fetch": "whatwg-fetch/fetch.js",
+        "from": "@searchfe/polyfills/array/from.js",
+        "fill": "@searchfe/polyfills/array/prototype/fill.js",
+        "find": "@searchfe/polyfills/array/prototype/find.js",
+        "findIndex": "@searchfe/polyfills/array/prototype/findIndex.js"
+        },
+        "umd": {
+        "polyfill": "promise-polyfill/lib/polyfill.js"
+        }
     },
-    "umd": {
-      "promise-polyfill": "promise-polyfill/lib/polyfill.js"
+    "js": {
+        "concat": {
+        "Animation": "@baidu/web-animations-js/web-animations.min.js"
+        }
     }
-  },
-  "js": {
-    "concat": {
-      "@baidu/web-animations-js": "@baidu/web-animations-js/web-animations.min.js"
-    }
-  }
 }
 
 gulp.src(['test/js-file/**/*'])
@@ -41,7 +45,6 @@ describe('test js gulp-conf-sourcemap', () => {
                 expect(distContent.trim()).toMatch('web-animations-js');
             }
         })
-        
     });
 });
 

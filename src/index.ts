@@ -39,7 +39,7 @@ const handleContents = (destFile: string, contents: any, map: object, path: stri
     if (typeof(map[i]) === 'string') {
       let id = i.toLowerCase();
       let value = path.toLowerCase();
-      if (value.indexOf(id) !== -1) {
+      if (value.indexOf(`/${id}`) !== -1) {
         map[i] = path;
       }
     }

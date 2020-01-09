@@ -1,1 +1,0 @@
-{"sync":{"glob":{"fetch":"static/async-polyfills/whatwg-fetch/fetch-0c21273fa3.js"},"umd":{"Promise":"static/async-polyfills/promise-polyfill/lib/polyfill-df2641d375.js"}},"async":{"concat":{"Animation":"static/async-polyfills/@baidu/web-animations-js/web-animations-b8d80a74d8.min.js"}}}

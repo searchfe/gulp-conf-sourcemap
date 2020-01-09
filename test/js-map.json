@@ -1,0 +1,16 @@
+{
+    "php": {
+        "glob": {
+            "fetch": "test/js-files/@searchfe/polyfills/fetch.js",
+            "from": "test/js-files/@searchfe/polyfills/array/from.js",
+            "fill": "test/js-files/@searchfe/polyfills/array/prototype/fill.js",
+            "find": "test/js-files/@searchfe/polyfills/array/prototype/findIndex.js",
+            "findIndex": "test/js-files/@searchfe/polyfills/array/prototype/findIndex.js"
+        }
+    },
+    "js": {
+        "concat": {
+            "Animation": "test/js-files/@baidu/web-animations-js/web-animations-b8d80a74d8.min.js"
+        }
+    }
+}
