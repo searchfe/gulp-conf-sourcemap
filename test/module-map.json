@@ -1,19 +1,15 @@
 {
     "php": {
-        "glob": {
-        "fetch": "whatwg-fetch/fetch.js",
-        "from": "@searchfe/polyfills/array/from.js",
-        "fill": "@searchfe/polyfills/array/prototype/fill.js",
-        "find": "@searchfe/polyfills/array/prototype/find.js",
-        "findIndex": "@searchfe/polyfills/array/prototype/findIndex.js"
-        },
-        "umd": {
-        "polyfill": "promise-polyfill/lib/polyfill.js"
-        }
+        "glob": [
+            "whatwg-fetch/fetch.js",
+            "@searchfe/polyfills/array/from.js",
+            "@searchfe/polyfills/array/prototype/fill.js",
+            "@searchfe/polyfills/array/prototype/find.js",
+            "@searchfe/polyfills/array/prototype/findIndex.js"
+        ],
+        "umd": ["promise-polyfill/lib/polyfill.js"]
     },
     "js": {
-        "concat": {
-        "Animation": "@baidu/web-animations-js/web-animations.min.js"
-        }
+        "concat": ["@baidu/web-animations-js/web-animations.min.js"]
     }
 }

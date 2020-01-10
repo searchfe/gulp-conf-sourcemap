@@ -31,35 +31,39 @@ const getFile = async (path: string) => {
   })
 }
 
-const handleContents = (destFile: string, contents: any, map: object, path: string) => {
+const handleContents = (destFile: string, contents: any, map: object, path: string, fileType: string) => {
   for (const i in map) {
     if (typeof(map[i]) === 'object') {
-      handleContents(destFile, contents, map[i], path);
+      handleContents(destFile, contents, map[i], path, fileType);
     }
     if (typeof(map[i]) === 'string') {
-      let id = i.toLowerCase();
-      let value = path.toLowerCase();
-      let fileName = value.split('/')[value.split('/').length - 1];
-      let fileNameArr = fileName.split(id);
-      const reg = /^-[a-z0-9]/i;
-      const reg2 = /^\.php/i;
-      const reg3 = /^\.j/i;
-      if (fileNameArr.length === 2) {
-          if (reg.test(fileNameArr[1]) || reg2.test(fileNameArr[1]) || reg3.test(fileNameArr[1])) {
-              map[i] = path;
-          }
-      }
+        const reg = /-[a-z0-9]{10}/ig;
+        const reg2 = /\.php/ig;
+        const reg3 = /\.js/ig;
+        let pathValue = path.split(fileType)[0];
+        let file = map[i].replace(reg2, '');
+        file = map[i].replace(reg3, '');
+        if (reg.test(pathValue)) {
+            pathValue = pathValue.replace(reg, '');
+        }
+        if (pathValue.indexOf(file) !== -1) {
+            let pathName = pathValue.split('/')[pathValue.split('/').length - 1];
+            let fileName = file.split('/')[file.split('/').length - 1];
+            if (pathName === fileName) {
+                map[i] = path;
+            }
+        }
     }
   }
 }
 
-const handle = (contents: any, destFile: string, path: string, cb: any, confFile: string) => {
+const handle = (contents: any, destFile: string, path: string, cb: any, confFile: string, fileType: string) => {
   getFile(confFile).then((data: any) => {
     if (data.file) {
       let obj = data.file;
       contents = JSON.parse(obj);
       let map =  Object.assign({}, contents);
-      handleContents(destFile, contents, map, path);
+      handleContents(destFile, contents, map, path, fileType);
       contents = Object.assign({}, contents, map);
       contents = JSON.stringify(contents);
       fs.writeFile(destFile, contents, (res: any) => {
@@ -99,10 +103,10 @@ export function replacePath(param: any = {}) {
           let destFile = `${dest}/${mapName}`;
           let contents = {};
           isFileExisted(destFile).then(() => {
-              handle(contents, destFile, path, cb, destFile);
+              handle(contents, destFile, path, cb, destFile, fileType);
           }).catch(() => {
             createFolder(destFile);
-            handle(contents, destFile, path, cb, confFile);
+            handle(contents, destFile, path, cb, confFile, fileType);
           });
         }
         else {

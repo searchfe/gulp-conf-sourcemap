@@ -1,0 +1,17 @@
+{
+    "sync": {
+        "glob": [
+            "static/molecules/polyfills/@searchfe/polyfills/url-4295a5ca7c.js",
+            "static/molecules/polyfills/@searchfe/polyfills/object/assign-caf3e12af1.js",
+            "static/molecules/polyfills/@searchfe/polyfills/array/from-ebe8177eca.js",
+            "static/molecules/polyfills/@searchfe/polyfills/array/prototype/fill-6ee1e31d07.js",
+            "static/molecules/polyfills/@searchfe/polyfills/array/prototype/find-38a007aaa8.js",
+            "static/molecules/polyfills/@searchfe/polyfills/array/prototype/findIndex-9175b3f7c7.js",
+            "static/molecules/polyfills/whatwg-fetch/fetch-0c21273fa3.js"
+        ],
+        "umd": ["static/molecules/polyfills/promise-polyfill/lib/polyfill-df2641d375.js"]
+    },
+    "async": {
+        "concat": ["@baidu/web-animations-js/web-animations.min.js"]
+    }
+}
