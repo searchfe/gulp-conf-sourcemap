@@ -31,30 +31,40 @@ const getFile = async (path: string) => {
   })
 }
 
-const handleContents = (destFile: string, contents: any, map: object, path: string, fileType: string) => {
-  for (const i in map) {
-    if (typeof(map[i]) === 'object') {
-      handleContents(destFile, contents, map[i], path, fileType);
-    }
-    if (typeof(map[i]) === 'string') {
-        const reg = /-[a-z0-9]{10}/ig;
-        const reg2 = /\.php/ig;
-        const reg3 = /\.js/ig;
-        let pathValue = path.split(fileType)[0];
-        let file = map[i].replace(reg2, '');
-        file = map[i].replace(reg3, '');
-        if (reg.test(pathValue)) {
-            pathValue = pathValue.replace(reg, '');
+const handleContents = (destFile: string, contents: any, map: object, path: string, fileType: string, from?: string) => {
+    for (const i in map) {
+        if (Array.isArray(map[i])) {
+            handleContents(destFile, contents, map[i], path, fileType, 'array');
         }
-        if (pathValue.indexOf(file) !== -1) {
-            let pathName = pathValue.split('/')[pathValue.split('/').length - 1];
-            let fileName = file.split('/')[file.split('/').length - 1];
-            if (pathName === fileName) {
+        if (typeof(map[i]) === 'object') {
+            handleContents(destFile, contents, map[i], path, fileType);
+        }
+        if (typeof(map[i]) === 'string' && from === 'array') {
+            const reg = /-[a-z0-9]{10}/ig;
+            const reg2 = /\.php/ig;
+            const reg3 = /\.js/ig;
+            let pathValue = path.split(fileType)[0];
+            let file = map[i].replace(reg2, '');
+            file = map[i].replace(reg3, '');
+            if (reg.test(pathValue)) {
+                pathValue = pathValue.replace(reg, '');
+            }
+            if (pathValue.indexOf(file) !== -1) {
+                let pathName = pathValue.split('/')[pathValue.split('/').length - 1];
+                let fileName = file.split('/')[file.split('/').length - 1];
+                if (pathName === fileName) {
+                    map[i] = path;
+                }
+            }
+        }
+        if (typeof(map[i]) === 'string' && from == null) {
+            let id = i.toLowerCase();
+            let value = path.toLowerCase();
+            if (value.indexOf(`/${id}`) !== -1) {
                 map[i] = path;
             }
         }
     }
-  }
 }
 
 const handle = (contents: any, destFile: string, path: string, cb: any, confFile: string, fileType: string) => {
